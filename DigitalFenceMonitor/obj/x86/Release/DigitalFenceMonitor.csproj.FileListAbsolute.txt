@@ -59,3 +59,42 @@ C:\Users\godshen\Documents\Visual Studio 2015\Projects\DFM_V4_EN\DigitalFenceMon
 C:\Users\godshen\Documents\Visual Studio 2015\Projects\DFM_V4_EN\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.exe
 C:\Users\godshen\Documents\Visual Studio 2015\Projects\DFM_V4_EN\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.pdb
 C:\Users\godshen\Documents\Visual Studio 2015\Projects\DFM_V4_EN\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.csprojResolveAssemblyReference.cache
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\DigitalFenceMonitor.exe.config
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\DigitalFenceMonitor.exe
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\DigitalFenceMonitor.pdb
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\mysql.data.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\mysql.data.entity.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\mysql.visualstudio.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\mysql.web.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\Newtonsoft.Json.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\EnvDTE.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\EnvDTE80.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\stdole.dll
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\EnvDTE.xml
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\x86\Release\EnvDTE80.xml
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.csproj.ResolveComReference.cache
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.AboutCMS.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormAlertSearch.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormHoyo.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormSpeedAdjust.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormStaChange.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormEditNodeName.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormMain.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormDefenAreaAdd.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormDefenceAreaChange.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormDenfenAreaSet.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormDigitalMap.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormLinkage.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormMusic.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormStaSet.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormLogin.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.Properties.Resources.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormSingleSet.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormSysConfig.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.FormUserSet.resources
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.csproj.GenerateResource.cache
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.csproj.CoreCompileInputs.cache
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.csproj.CopyComplete
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.exe
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.pdb
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\x86\Release\DigitalFenceMonitor.csprojAssemblyReference.cache
