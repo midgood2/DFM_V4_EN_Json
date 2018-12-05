@@ -107,8 +107,8 @@ namespace DigitalFenceMonitor
     public class cmsMap
     {
         // public int ID { get; set; }
-        public int PointX { get; set; }
-        public int PointY { get; set; }
+        public string PointX { get; set; }
+        public string PointY { get; set; }
         public string MapInfo { get; set; }
         public bool Cmp(cmsMap Map)
         {

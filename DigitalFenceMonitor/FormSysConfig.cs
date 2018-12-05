@@ -17,7 +17,6 @@ namespace DigitalFenceMonitor
     public partial class FormSysConfig : Form
     {
         FormMain fm = new FormMain();
-        OleDbConnection conn = FormMain.conn;
 
         public delegate void UpdateMsgTB(string msg);
 
@@ -50,22 +49,12 @@ namespace DigitalFenceMonitor
                 FormMain.localIP = fm.getValidIP(localip);
                 FormMain.localPort = fm.getValidPort(localport);
                 UpdateMsgTextBox("Has been set->Localhost IP:Port=" + localip + ":" + localport + "    please update config");
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                while(conn.State == ConnectionState.Closed)
-                {
-                    conn.Open();
-                    Thread.Sleep(100);
-                }
+                
                 string sql = " update tb_reg set lastip ='" + localip.ToString() + "',lastport='"+localport.ToString()+"'";
-                OleDbCommand comm = new OleDbCommand(sql, conn);
-                try
-                {
-                    comm.ExecuteNonQuery();
-                }
-                catch
-                {
-                    MessageBox.Show("database update failed","WARN");
-                }
+
+                FormMain.DataModel.cmsRegister.LastIp = localip.ToString();
+                FormMain.DataModel.cmsRegister.LastPort = localport.ToString();
+                
                 this.Close();
             }
             else

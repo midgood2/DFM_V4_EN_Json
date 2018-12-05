@@ -8,7 +8,6 @@ namespace DigitalFenceMonitor
 {
     public partial class FormMusic : Form
     {
-        OleDbConnection conn = FormMain.conn;
         static public string MusicPath = "";
         public FormMusic()
         {

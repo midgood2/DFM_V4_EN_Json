@@ -14,7 +14,6 @@ namespace DigitalFenceMonitor
 {
     public partial class AboutCMS : Form
     {
-        OleDbConnection conn = FormMain.conn;
         public List<string> macs = new List<string>();
         string dis = "";
         string disr = "";
@@ -27,12 +26,7 @@ namespace DigitalFenceMonitor
        
         private void AboutCMS_Load(object sender, EventArgs e)
         {
-            if (conn.State == ConnectionState.Closed) conn.Open();
-            DataSet dsMsg = new DataSet();
-            string sql = "select HoyoSerial from tb_reg";
-            OleDbDataAdapter da = new OleDbDataAdapter(sql, conn);
-            da.Fill(dsMsg);
-            disr = dsMsg.Tables[0].Rows[0]["HoyoSerial"].ToString();
+            disr = FormMain.DataModel.cmsRegister.HoyoSerial;
 
                 
 
@@ -103,11 +97,8 @@ namespace DigitalFenceMonitor
 
                 if (disr==(macr[1] + macr[0] + macr[3] + macr[2] + macr[5] + macr[4]))
                 {
-                    if (conn.State == ConnectionState.Closed) conn.Open();
                     string sql = " update tb_reg set HoyoSerial ='" + disr + "'";
-                    OleDbCommand comm = new OleDbCommand(sql, conn);
-                    comm.ExecuteNonQuery();
-
+                    FormMain.DataModel.cmsRegister.HoyoSerial = disr;
                     btn_reg.Enabled = false;
                     btn_reg.Text = "Registration success";
                 }

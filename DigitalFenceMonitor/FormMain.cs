@@ -96,7 +96,7 @@ namespace DigitalFenceMonitor
 
         }
         //定义数据库连接变量
-        static public OleDbConnection conn = new OleDbConnection();
+        // static public OleDbConnection conn = new OleDbConnection();
         static public cmsDataModel DataModel = new cmsDataModel();
 
         //定义IP:Port<->基站名互转数组
@@ -1297,23 +1297,24 @@ namespace DigitalFenceMonitor
                 UpdateAlertArea("dele");
                 DisplayMapFun("", Color.Blue);
 
-                if (conn.State == ConnectionState.Closed) conn.Open();
                 string sql = "";
                 sql += " update tb_Content set OperationResult = 'Has been dealed'";
                 sql += " Where StationIP = '" + s1 + "'";
                 sql += " and AreaNum = '" + s2 + "'"; ;
                 sql += " and Descripe like '%" + s3 + "%'";
-                OleDbCommand comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
-
-                sql = "";
-                sql += " update tb_Content set";
-                sql += " Operator = '" + opr + "'";
-                sql += " Where StationIP = '" + s1 + "'";
-                sql += " and AreaNum = '" + s2 + "'"; ;
-                sql += " and Descripe like '%" + s3 + "%'";
-                comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for (int i=0;i<DataModel.Content.Count;i++)
+                {
+                    cmsContent updCon = DataModel.Content[i];
+                    if (updCon.StationIP == s1
+                        && updCon.AreaNum == s2
+                        && JsonHelper.IsRexMatched(updCon.Descripe, ".*" + s3 + ".*")
+                        )
+                    {
+                        updCon.OperationResult = "Has been dealed";
+                        updCon.Operator = opr;
+                        DataModel.Content[i] = updCon;
+                    }
+                }
             }
         }
 
@@ -1360,11 +1361,21 @@ namespace DigitalFenceMonitor
             cmd += "'" + "none" + "'";
             cmd += ")";
 
-            OleDbCommand comm = new OleDbCommand(cmd, conn);
-            try { comm.ExecuteNonQuery(); }
-            catch {; }
+            cmsContent addCon = new cmsContent();
+            addCon.NowDate = alertinfobuff[0];
+            addCon.NowTime = alertinfobuff[1];
+            addCon.StationIP = alertinfobuff[2];
+            addCon.StationName = alertinfobuff[3];
+            addCon.AreaNum = alertinfobuff[4];
+            addCon.AlertType = alertinfobuff[5];
+            addCon.Descripe = alertinfobuff[6];
 
-            for(int i = 3; i > 0; i--)
+            addCon.OperationInfo = "none";
+            addCon.Operator = "none";
+            addCon.OperationResult = "none";
+
+
+            for (int i = 3; i > 0; i--)
             {
                 for(int j=0;j< AlertInfoBuff.Length;j++)
                     dataGridView.Rows[i].Cells[AlertInfoBuff[j]].Value = dataGridView.Rows[i-1].Cells[AlertInfoBuff[j]].Value;
@@ -1411,7 +1422,9 @@ namespace DigitalFenceMonitor
                     {
                         if (tempdt.Rows[i]["MapInfo"].ToString() == last)
                         {
-                            Point p = new Point((int)tempdt.Rows[i]["PointX"], (int)tempdt.Rows[i]["PointY"]);
+                            string x = (string)tempdt.Rows[i]["PointX"];
+                            string y = (string)tempdt.Rows[i]["PointY"];
+                            Point p = new Point(int.Parse(x), int.Parse(y));
                             PointBuff[AreaCount][PointCount++] = p;
                         }
 
@@ -1467,9 +1480,15 @@ namespace DigitalFenceMonitor
                 cmd += "'" + SaveMap[i].Split(',')[1] + "',";
                 cmd += "'" + lb_thismap.Text.Split('-')[0] + "'";
                 cmd += ")";
-                OleDbCommand comm = new OleDbCommand(cmd, conn);
-                comm.ExecuteNonQuery();
+
+                cmsMap addM = new cmsMap();
+                addM.PointX = SaveMap[i].Split(',')[0];
+                addM.PointY = SaveMap[i].Split(',')[1];
+                addM.MapInfo = lb_thismap.Text.Split('-')[0];
+
+                FormMain.DataModel.Map.Add(addM);
             }
+
 
             UpdateAlertArea("");
             SaveMap.Clear();
@@ -1477,10 +1496,19 @@ namespace DigitalFenceMonitor
 
         private void 删除ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (conn.State == ConnectionState.Closed) conn.Open();
             string cmd = "delete * from tb_Map where MapInfo = '" + lb_thismap.Text.Split('-')[0] + "'";
-            OleDbCommand comm = new OleDbCommand(cmd, conn);
-            comm.ExecuteNonQuery();
+            List<cmsMap> RemoveListMap = new List<cmsMap>();
+            foreach (cmsMap cmsM in FormMain.DataModel.Map)
+            {
+                if ( cmsM.MapInfo == lb_thismap.Text.Split('-')[0])
+                {
+                    RemoveListMap.Add(cmsM);
+                }
+            }
+            foreach (cmsMap rmMap in RemoveListMap)
+            {
+                FormMain.DataModel.Map.Remove(rmMap);
+            }
 
             UpdateAlertArea("dele");
             DisplayMapFun("", Color.Blue);

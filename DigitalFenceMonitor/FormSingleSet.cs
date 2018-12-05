@@ -9,8 +9,6 @@ namespace DigitalFenceMonitor
 {
     public partial class FormSingleSet : Form
     {
-        OleDbConnection conn = FormMain.conn;
-        
         public FormSingleSet()
         {
             InitializeComponent();
@@ -122,9 +120,18 @@ namespace DigitalFenceMonitor
             cmd += "'" + "has been sent" + "'";
             cmd += ")";
 
-            OleDbCommand comm = new OleDbCommand(cmd, conn);
-            try { comm.ExecuteNonQuery(); }
-            catch {; }
+            cmsContent addCon = new cmsContent();
+            addCon.NowDate = alertinfobuff[0];
+            addCon.NowTime = alertinfobuff[1];
+            addCon.StationIP = alertinfobuff[2];
+            addCon.StationName = alertinfobuff[3];
+            addCon.AreaNum = alertinfobuff[4];
+            addCon.AlertType = alertinfobuff[5];
+            addCon.Descripe = alertinfobuff[6];
+
+            addCon.OperationInfo = "none";
+            addCon.Operator = "admin";
+            addCon.OperationResult = "has been sent";
         }
         private void but_confirm1_Click(object sender, EventArgs e)
         {
@@ -149,8 +156,12 @@ namespace DigitalFenceMonitor
                             cmd += "'" + lb_thisip.Text + "," + comboBox_DeviceAdd.Text + "',";
                             cmd += "'" + textBox_dayTime.Text + "-" + dayvol + "-" + textBox_nightTime.Text + "-" + nightvol + "'";
                             cmd += ")";
-                            OleDbCommand comm = new OleDbCommand(cmd, conn);
-                            comm.ExecuteNonQuery();
+
+                            cmsDayNightAlert addDNA = new cmsDayNightAlert();
+                            addDNA.IpPortNum = lb_thisip.Text + "," + comboBox_DeviceAdd.Text;
+                            addDNA.Status = textBox_dayTime.Text + "-" + dayvol + "-" + textBox_nightTime.Text + "-" + nightvol;
+
+                            FormMain.DataModel.DayNightAlert.Add(addDNA);
                         }
                         else
                             MessageBox.Show("date format error", "WARN");
@@ -166,16 +177,18 @@ namespace DigitalFenceMonitor
                             cmd += "'" + textBox_dayTime.Text + "-" + comboBox_dayVol.SelectedIndex + "-" + textBox_nightTime.Text + "-" + comboBox_nightVol.SelectedIndex + "'";
                             cmd += " where IpPortNum = ";
                             cmd += "'" + lb_thisip.Text + "," + comboBox_DeviceAdd.Text + "'";
-                            OleDbCommand comm = new OleDbCommand(cmd, conn);
-                            try
+
+                            for (int i = 0; i < FormMain.DataModel.Content.Count; i++)
                             {
-                                comm.ExecuteNonQuery();
+                                cmsDayNightAlert updDNA = FormMain.DataModel.DayNightAlert[i];
+                                if (updDNA.IpPortNum == lb_thisip.Text + "," + comboBox_DeviceAdd.Text )
+                                {
+                                    updDNA.Status = textBox_dayTime.Text + "-" + comboBox_dayVol.SelectedIndex + "-" + textBox_nightTime.Text + "-" + comboBox_nightVol.SelectedIndex;
+                                    FormMain.DataModel.DayNightAlert[i] = updDNA;
+                                }
                             }
-                            catch
-                            {
-                                MessageBox.Show("setting errer，try again", "WARN");
-                            }
-                            
+
+
                         }
                     }
                 }
@@ -193,8 +206,20 @@ namespace DigitalFenceMonitor
                         FormMain.DayNightBuff.Remove(lb_thisip.Text + "," + comboBox_DeviceAdd.Text);
                         string cmd = "delete * from tb_DayNightAlert Where IpPortNum =";
                         cmd += "'" + lb_thisip.Text + "," + comboBox_DeviceAdd.Text + "'";
-                        OleDbCommand comm = new OleDbCommand(cmd, conn);
-                        comm.ExecuteNonQuery();
+
+                        List<cmsDayNightAlert> RemoveListDNA = new List<cmsDayNightAlert>();
+                        foreach (cmsDayNightAlert cmsDNA in FormMain.DataModel.DayNightAlert)
+                        {
+                            if (cmsDNA.IpPortNum == lb_thisip.Text + "," + comboBox_DeviceAdd.Text)
+                            {
+                                RemoveListDNA.Add(cmsDNA);
+                            }
+                        }
+                        foreach (cmsDayNightAlert rmDNA in RemoveListDNA)
+                        {
+                            FormMain.DataModel.DayNightAlert.Remove(rmDNA);
+                        }
+
                     }
                     catch { MessageBox.Show("delete failed"); }
                 }
@@ -229,24 +254,21 @@ namespace DigitalFenceMonitor
         {
             lb_thisip.Text = FormMain.IPBuff[str] ;
             string sql = "select AreaNum from tb_AreaSet where IPandPort = '"+ lb_thisip.Text + "'";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
-            tempda.Fill(tempdt);
-
+            
             comboBox_DeviceAdd.Items.Clear();
             comboBox_DeviceAdd.Text = "";
 
-            for (int i = 0; i < tempdt.Rows.Count; i++)
+            for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
             {
                 if (i != 0)
                 {
-                    int x = Convert.ToInt16(tempdt.Rows[i]["AreaNum"]);
-                    int y = Convert.ToInt16(tempdt.Rows[i - 1]["AreaNum"]);
-                    if (x != y) comboBox_DeviceAdd.Items.Add(tempdt.Rows[i]["AreaNum"]);
+                    int x = Convert.ToInt16(FormMain.DataModel.AreaSet[i].AreaNum);
+                    int y = Convert.ToInt16(FormMain.DataModel.AreaSet[i-1].AreaNum);
+                    if (x != y) comboBox_DeviceAdd.Items.Add(FormMain.DataModel.AreaSet[i].AreaNum);
                 }
                 else
                 {
-                    comboBox_DeviceAdd.Items.Add(tempdt.Rows[i]["AreaNum"]);
+                    comboBox_DeviceAdd.Items.Add(FormMain.DataModel.AreaSet[i].AreaNum);
                 }
             }
             

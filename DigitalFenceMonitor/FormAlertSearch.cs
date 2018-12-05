@@ -18,7 +18,6 @@ namespace DigitalFenceMonitor
         {
             InitializeComponent();
         }
-        OleDbConnection conn = FormMain.conn;
         private void AlertSearch_Load(object sender, EventArgs e)
         {
             if (FormMain.NowUser=="admin")
@@ -28,20 +27,14 @@ namespace DigitalFenceMonitor
 
         private void ReLoad()
         {
-            
-
-            OleDbDataAdapter alertada = null;
-            DataTable datatable = new DataTable();
+            DataTable datatable = JsonHelper.ToDataTable(FormMain.DataModel.Content);
             BindingSource bindingsrc = new BindingSource();
             OleDbCommandBuilder commandbld = null;
 
             string sql = "select * from tb_Content";
 
-            alertada = new OleDbDataAdapter(sql, conn);
             dataGridView.DataSource = datatable;
             bindingsrc.DataSource = datatable;
-            commandbld = new OleDbCommandBuilder(alertada);
-            alertada.Fill(datatable);
 
             dataGridView.Columns["NowDate"].HeaderText = "Date";
             dataGridView.Columns["NowTime"].HeaderText = "Time";
@@ -65,8 +58,7 @@ namespace DigitalFenceMonitor
         private void but_clear_Click(object sender, EventArgs e)
         {
             string sql = "delete from tb_Content";
-            OleDbCommand comm = new OleDbCommand(sql, conn);
-            comm.ExecuteNonQuery();
+            FormMain.DataModel.Content.Clear();
 
             DataTable datatable = null;
             dataGridView.DataSource = datatable;

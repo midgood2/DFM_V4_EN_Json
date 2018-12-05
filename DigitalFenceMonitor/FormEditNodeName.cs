@@ -19,7 +19,6 @@ namespace DigitalFenceMonitor
         {
             InitializeComponent();
         }
-        OleDbConnection conn = FormMain.conn;
 
         int forswitch = FormMain.Num_Node_Vol_CMD;
         private void EditNodeName_Load(object sender, EventArgs e)
@@ -66,43 +65,72 @@ namespace DigitalFenceMonitor
         private void NodeNameOK()
         {
             bool flag = true;
-            if (conn.State == ConnectionState.Closed) conn.Open();
             string sql = "select Descripe from tb_AreaSet";
             sql += " where IPandPort = '" + tboxoldtext.Split(',')[0] + "'";
             sql += " and AreaNum = '" + tboxoldtext.Split(',')[1] + "'";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
-            tempda.Fill(tempdt);
-            for (int i = 0; i < tempdt.Rows.Count; i++)
+            for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
             {
-                string s = tempdt.Rows[i]["Descripe"].ToString();
-                if (s == tBox_new.Text) flag = false;
+                if ( FormMain.DataModel.AreaSet[i].IPport == tboxoldtext.Split(',')[0]
+                    && FormMain.DataModel.AreaSet[i].AreaNum == tboxoldtext.Split(',')[1] 
+                    )
+                {
+                    string s = FormMain.DataModel.AreaSet[i].Describe;
+                    if (s == tBox_new.Text) flag = false;
+                }
+                
             }
             if (flag) {
                 sql = "select Map from tb_AreaSet";
                 sql += " where IPandPort = '" + tboxoldtext.Split(',')[0] + "'";
                 sql += " and AreaNum = '" + tboxoldtext.Split(',')[1] + "'";
                 sql += " and Descripe = '" + tboxoldtext.Split(',')[2] + "'";
-                tempdt = new DataTable();
-                tempda = new OleDbDataAdapter(sql, conn);
-                tempda.Fill(tempdt);
-                string mapTemp = tempdt.Rows[0]["Map"].ToString();
+                string mapTemp = "";
+                for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
+                {
+                    if (FormMain.DataModel.AreaSet[i].IPport == tboxoldtext.Split(',')[0]
+                        && FormMain.DataModel.AreaSet[i].AreaNum == tboxoldtext.Split(',')[1]
+                        && FormMain.DataModel.AreaSet[i].Describe == tboxoldtext.Split(',')[2]
+                        )
+                    {
+                        mapTemp = FormMain.DataModel.AreaSet[i].Map;
+                    }
+
+                }
+
+                
 
                 string descripe = tBox_new.Text.Trim();
                 sql = " update tb_AreaSet set Descripe ='" + descripe;
                 sql += "' Where Descripe = '" + tboxoldtext.Split(',')[2] + "'";
                 sql += " and IPandPort = '" + tboxoldtext.Split(',')[0] + "'";
                 sql += " and AreaNum = '" + tboxoldtext.Split(',')[1] + "'";
-                OleDbCommand comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
+                {
+                    cmsAreaSet updAS = FormMain.DataModel.AreaSet[i];
+                    if (updAS.IPport == tboxoldtext.Split(',')[0]
+                        && updAS.AreaNum == tboxoldtext.Split(',')[1]
+                        && updAS.Describe == tboxoldtext.Split(',')[2]
+                        )
+                    {
+                        updAS.Describe = descripe;
+                        FormMain.DataModel.AreaSet[i] = updAS;
+                    }
+                }
 
                 sql = " update tb_Map set MapInfo ='" +
                     FormMain.CurrentNode.Split(',')[0] + "," +
                     FormMain.CurrentNode.Split(',')[1] + "," +
                     tBox_new.Text +
                     " 'Where MapInfo = '" + FormMain.CurrentNode + "'";
-                comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for (int i = 0; i < FormMain.DataModel.Map.Count; i++)
+                {
+                    cmsMap updM = FormMain.DataModel.Map[i];
+                    if ( updM.MapInfo == FormMain.CurrentNode )
+                    {
+                        updM.MapInfo = FormMain.CurrentNode.Split(',')[0] + "," + FormMain.CurrentNode.Split(',')[1] + "," + tBox_new.Text;
+                        FormMain.DataModel.Map[i] = updM;
+                    }
+                }
 
                 FormMain.ContentBuff[mapTemp]=descripe;
 

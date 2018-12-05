@@ -16,11 +16,8 @@ namespace DigitalFenceMonitor
         {
             InitializeComponent();
         }
-        OleDbConnection conn = FormMain.conn;
 
         string ipPort, name, addr, posi, type;
-
-
 
         private void FormDefenceAreaChange_Load(object sender, EventArgs e)
         {
@@ -54,11 +51,7 @@ namespace DigitalFenceMonitor
             string position = textBox_SatNamen.Text.Trim();
             string type = textBox_Portn.Text.Trim();
 
-            OleDbConnection conn = FormMain.conn;
-            OleDbCommand comm = null;
             string sql = null;
-
-            if (conn.State == ConnectionState.Closed) conn.Open();
 
             try
             {
@@ -68,17 +61,41 @@ namespace DigitalFenceMonitor
                 sql += "' , DeviceType = '" + type;
                 sql += "' , Map = replace( Map , '," + addressOld + "-' , '," + address + "-' )";
                 sql += " Where IPandPort = '" + ipPort + "' and AreaNum = '" + addr +"' and Descripe = '" + posi + "'";
-                comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for(int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
+                {
+                    cmsAreaSet tmpAS = FormMain.DataModel.AreaSet[i];
+                    if ( tmpAS.IPport == ipPort
+                        && tmpAS.AreaNum == addr 
+                        && tmpAS.Describe == posi
+                        )
+                    {
+                        tmpAS.AreaNum = address;
+                        tmpAS.Describe = position;
+                        tmpAS.DeviceType = type;
+                        tmpAS.Map = tmpAS.Map.Replace(addressOld+"-", address+"-");
+                        FormMain.DataModel.AreaSet[i] = tmpAS;
 
+                    }
+                }
 
                 sql = " update tb_AreaSet set ";
                 sql += "    AreaNum = '" + address;
                 sql += "' , DeviceType = '" + type;
                 sql += "' , Map = replace( Map , '," + addressOld + "-' , '," + address + "-' )";
                 sql += " Where IPandPort = '" + ipPort + "' and AreaNum = '" + addr + "'";
-                comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
+                {
+                    cmsAreaSet tmpAS = FormMain.DataModel.AreaSet[i];
+                    if (tmpAS.IPport == ipPort
+                        && tmpAS.AreaNum == addr
+                        )
+                    {
+                        tmpAS.AreaNum = address;
+                        tmpAS.DeviceType = type;
+                        tmpAS.Map = tmpAS.Map.Replace(addressOld + "-", address + "-");
+                        FormMain.DataModel.AreaSet[i] = tmpAS;
+                    }
+                }
 
                 update_datagridView();
             }
@@ -95,13 +112,24 @@ namespace DigitalFenceMonitor
                 sql = " update tb_Map set ";
                 sql += " MapInfo = '" + ipPort + "," + address + "," + position + "'";
                 sql += " Where MapInfo = '" + ipPort + "," + addr + "," + posi + "'";
-                comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for (int i = 0; i < FormMain.DataModel.Map.Count; i++)
+                {
+                    cmsMap tmpMap = FormMain.DataModel.Map[i];
+                    if (tmpMap.MapInfo == ipPort + "," + addr + "," + posi )
+                    {
+                        tmpMap.MapInfo = ipPort + "," + address + "," + position;
+                        FormMain.DataModel.Map[i] = tmpMap;
+                    }
+                }
 
                 sql = " update tb_Map set ";
                 sql += " MapInfo = replace(MapInfo,',"+ addr + ",',',"+ address + ",'"+")";
-                comm = new OleDbCommand(sql, conn);
-                comm.ExecuteNonQuery();
+                for (int i = 0; i < FormMain.DataModel.Map.Count; i++)
+                {
+                    cmsMap tmpMap = FormMain.DataModel.Map[i];
+                    tmpMap.MapInfo = tmpMap.MapInfo.Replace(addr,address);
+                    FormMain.DataModel.Map[i] = tmpMap;
+                }
             }
 
             catch
