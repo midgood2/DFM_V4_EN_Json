@@ -16,7 +16,6 @@ namespace DigitalFenceMonitor
         {
             InitializeComponent();
         }
-        OleDbConnection conn = FormMain.conn;
 
         string ip, name, port;
         private void ChangeDatabase_Load(object sender, EventArgs e)
@@ -46,9 +45,6 @@ namespace DigitalFenceMonitor
             string portn = textBox_Portn.Text.Trim();
             if (true)
             {
-                OleDbCommand comm = null;
-                if (conn.State == ConnectionState.Closed) conn.Open();
-
                 string sql = null;
                 
                 try
@@ -59,8 +55,19 @@ namespace DigitalFenceMonitor
                     sql += "' , StaName= '" + namen;
                     sql += "' , IPandPort= '" + ipn + ":" + portn;
                     sql += " 'Where IPandPort = '" + ip + ":" + port + "'";
-                    comm = new OleDbCommand(sql, conn);
-                    comm.ExecuteNonQuery();
+                    for (int i=0;i<FormMain.DataModel.StationSet.Count;i++)
+                    {
+                        cmsStationSet udSS = FormMain.DataModel.StationSet[i];
+                        if (udSS.IPandPort == (ip + ":" + port))
+                        {
+                            udSS.IP = ipn;
+                            udSS.Port = portn;
+                            udSS.StaName = namen;
+                            udSS.IPandPort = ipn + ":" + portn;
+                            FormMain.DataModel.StationSet[i] = udSS;
+                        }
+                    }
+
                     update_datagridView();
                 }
                 catch
@@ -74,10 +81,18 @@ namespace DigitalFenceMonitor
                     sql += " IPandPort= '" + ipn + ":" + portn;
                     sql += "' , Map = replace( Map , '" + ip + ":" + port + "' , '" + ipn + ":" + portn + "' )";
                     sql += " Where IPandPort = '" + ip + ":" + port + "'";
-                    comm = new OleDbCommand(sql, conn);
-                    comm.ExecuteNonQuery();
+                    for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
+                    {
+                        cmsAreaSet udAS = FormMain.DataModel.AreaSet[i];
+                        if (udAS.IPport == (ip + ":" + port))
+                        {
+                            udAS.IPport = ipn + ":" + portn;
+                            udAS.Map = udAS.Map.Replace(ip + ":" + port, ipn + ":" + portn);
+                            FormMain.DataModel.AreaSet[i] = udAS;
+                        }
+                        
+                    }
                 }
-                    
                 catch
                 {
                     MessageBox.Show("change failed");
@@ -87,10 +102,11 @@ namespace DigitalFenceMonitor
                 {
                     sql = " update tb_Map set ";
                     sql += " MapInfo = replace( MapInfo , '" + ip + ":" + port + "' , '" + ipn + ":" + portn + "' )";
-                    comm = new OleDbCommand(sql, conn);
-                    comm.ExecuteNonQuery();
+                    foreach (cmsMap udMap in FormMain.DataModel.Map)
+                    {
+                        udMap.MapInfo = udMap.MapInfo.Replace(ip + ":" + port, ipn + ":" + portn);
+                    }
                 }
-
                 catch
                 {
                     MessageBox.Show("change failed");

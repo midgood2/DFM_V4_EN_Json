@@ -175,7 +175,7 @@ namespace DigitalFenceMonitor
                     RegDate = date.ToString();
                     cmsReg.RegDate = date.ToString();
                     DataModel.cmsRegister = cmsReg;
-                    DataModel.write(JsonHelper.SerializeObject(DataModel));
+                    DataModel.Write(JsonHelper.SerializeObject(DataModel));
                 }
             }
             catch(Exception ex)
@@ -430,7 +430,7 @@ namespace DigitalFenceMonitor
             {
                 try
                 {
-                    DataModel.write(JsonHelper.SerializeObject(DataModel));
+                    DataModel.Write(JsonHelper.SerializeObject(DataModel));
                 }
                 catch
                 {

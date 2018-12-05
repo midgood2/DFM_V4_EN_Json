@@ -108,7 +108,6 @@ C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\Debug\mysql.data.entity.dll
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\Debug\mysql.web.dll
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\bin\Debug\Newtonsoft.Json.dll
-C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csprojResolveAssemblyReference.cache
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csproj.ResolveComReference.cache
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.AboutCMS.resources
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.FormAlertSearch.resources
@@ -133,3 +132,5 @@ C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csproj.CoreCompileInputs.cache
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.exe
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.pdb
+C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csprojAssemblyReference.cache
+C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csproj.CopyComplete

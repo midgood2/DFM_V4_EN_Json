@@ -11,7 +11,7 @@ namespace DigitalFenceMonitor
 {
     public class cmsAccount
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public string UserName { get; set; }
         public string PassWord { get; set; }
         public string autorition { get; set; }
@@ -19,7 +19,7 @@ namespace DigitalFenceMonitor
 
     public class cmsAreaSet
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public string IPport { get; set; }
         public string AreaNum { get; set; }
         public string Status { get; set; }
@@ -30,7 +30,7 @@ namespace DigitalFenceMonitor
 
     public class cmsContent
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public string NowDate { get; set; }
         public string NowTime { get; set; }
         public string StationIP { get; set; }
@@ -41,45 +41,111 @@ namespace DigitalFenceMonitor
         public string OperationInfo { get; set; }
         public string Operator { get; set; }
         public string OperationResult { get; set; }
+        public bool Cmp(cmsContent Con)
+        {
+            if (
+                Con.NowDate == this.NowDate &&
+                Con.NowTime == this.NowTime &&
+                Con.StationIP == this.StationIP &&
+                Con.StationName == this.StationName &&
+                Con.AreaNum == this.AreaNum &&
+                Con.AlertType == this.AlertType &&
+                Con.Descripe == this.Descripe &&
+                Con.OperationInfo == this.OperationInfo &&
+                Con.Operator == this.Operator &&
+                Con.OperationResult == this.OperationResult
+                )
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     public class cmsStationSet
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public string IP { get; set; }
         public string Port { get; set; }
         public string StaName { get; set; }
         public string IPandPort { get; set; }
+        public bool Cmp(cmsStationSet SS)
+        {
+            if(
+                SS.IP == this.IP &&
+                SS.Port == this.Port &&
+                SS.StaName == this.StaName &&
+                SS.IPandPort == this.IPandPort
+                )
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
 
     public class cmsLinkageAlert
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public string LinkInfo { get; set; }
         public string IpPortNodes { get; set; }
+        public bool Cmp(cmsLinkageAlert LA)
+        {
+            if (
+                LA.LinkInfo == this.LinkInfo &&
+                LA.IpPortNodes == this.IpPortNodes
+                )
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
 
     public class cmsMap
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public int PointX { get; set; }
         public int PointY { get; set; }
         public string MapInfo { get; set; }
+        public bool Cmp(cmsMap Map)
+        {
+            if (
+                Map.PointX == this.PointX &&
+                Map.PointY == this.PointY &&
+                Map.MapInfo == this.MapInfo
+                )
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
 
     public class cmsDayNightAlert
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public string IpPortNum { get; set; }
         public string Status { get; set; }
+        public bool Cmp(cmsDayNightAlert DNA)
+        {
+            if (
+                DNA.IpPortNum == this.IpPortNum &&
+                DNA.Status == this.Status
+                )
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     public class cmsRegister
     {
-        public int ID { get; set; }
+        // public int ID { get; set; }
         public int SpeedAdj { get; set; }
         public string HoyoSerial { get; set; }
         public string RegDate { get; set; }
@@ -91,7 +157,7 @@ namespace DigitalFenceMonitor
 
     public class cmsDataModel
     {
-        private string path;
+        public string Path;
 
         public List<cmsAccount> Account = new List<cmsAccount>();
         public List<cmsAreaSet> AreaSet = new List<cmsAreaSet>();
@@ -111,12 +177,13 @@ namespace DigitalFenceMonitor
                 Directory.CreateDirectory(@userDocument);
             }
             string realPath = userDocument + "\\" + JsonPath;
-            this.path = realPath;
+            this.Path = realPath;
         }
 
-        public void write(string output)
+        public void Write(string output)
         {
-            FileStream fs = new FileStream(this.path, FileMode.OpenOrCreate, FileAccess.Write);
+            string MapPath = this.Path;
+            FileStream fs = new FileStream(@MapPath, FileMode.OpenOrCreate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             sw.WriteLine(formatJson(output));
             sw.Close();
@@ -151,16 +218,15 @@ namespace DigitalFenceMonitor
 
         public string ReadJson()
         {
-            string MapPath = this.path;
+            string MapPath = this.Path;
             try
             {
-                // if (File.Exists(MapPath))
                 FileStream fs = new FileStream(@MapPath, FileMode.Open, FileAccess.Read);
                 StreamReader sr = new StreamReader(fs);
                 string readToEnd = sr.ReadToEnd();
-                return readToEnd;
                 sr.Close();
                 fs.Close();
+                return readToEnd;
             }
             catch (Exception ex)
             {

@@ -39,13 +39,19 @@ namespace DigitalFenceMonitor
 
             Console.WriteLine(dataGridView.Columns);
 
-            dataGridView.Columns["IP"].HeaderText = "Base station IP";
-            dataGridView.Columns["StaName"].HeaderText = "Base station name";
-            dataGridView.Columns["Port"].HeaderText = "Port number";
+            try
+            {
+                dataGridView.Columns["IP"].HeaderText = "Base station IP";
+                dataGridView.Columns["StaName"].HeaderText = "Base station name";
+                dataGridView.Columns["Port"].HeaderText = "Port number";
+            }
+            catch { }
+            
         }
 
         private void btn_exit_Click(object sender, EventArgs e)
         {
+            FormMain.DataModel.Write( JsonHelper.SerializeObject( FormMain.DataModel ) );
             this.Close();
         }
 
@@ -80,12 +86,28 @@ namespace DigitalFenceMonitor
                     insertstr += str3 + "', '";
                     insertstr += str1 + ":" + str3 + "')";
 
-                    cmsStationSet cmsSS = new cmsStationSet();
-                    cmsSS.IP = str1;
-                    cmsSS.StaName = str2;
-                    cmsSS.Port = str3;
-                    cmsSS.IPandPort = str1 + ":" + str3;
-                    FormMain.DataModel.StationSet.Add(cmsSS);
+                    cmsStationSet addSS = new cmsStationSet();
+                    addSS.IP = str1;
+                    addSS.StaName = str2;
+                    addSS.Port = str3;
+                    addSS.IPandPort = str1 + ":" + str3;
+                    bool isRepeat = true;
+                    foreach ( cmsStationSet tmpSS in FormMain.DataModel.StationSet)
+                    {
+                        if ( addSS.Cmp(tmpSS) )
+                        {
+                            isRepeat = false;
+                            break;
+                        }
+                    }
+                    if (isRepeat)
+                    {
+                        FormMain.DataModel.StationSet.Add(addSS);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Repeat Infomation","Warn");
+                    }
 
                     DataLength++;
                     label_all.Text = DataLength.ToString();
@@ -136,21 +158,33 @@ namespace DigitalFenceMonitor
 
         private void but_Del_Click(object sender, EventArgs e)
         {
+            Console.WriteLine(label_select.Text);
+            if ( label_select.Text == null  || label_select.Text == "" )
+            {
+                MessageBox.Show("Please Select An Item!","Warn");
+                return;
+            }
             if (DataLength > 0 && int.Parse(label_select.Text)<DataLength)
             {
                 int Selected = int.Parse(label_select.Text);
-                string deleIP = dataGridView.Rows[Selected].Cells[1].Value.ToString();
-                string delePort = dataGridView.Rows[Selected].Cells[2].Value.ToString();
+                string deleIP = dataGridView.Rows[Selected].Cells["IP"].Value.ToString();
+                string delePort = dataGridView.Rows[Selected].Cells["Port"].Value.ToString();
                 string delestr = deleIP + ":" + delePort;
 
                 string mapstr = "delete from tb_Map where MapInfo like '"+"%"+ delestr + "%"+"'";
                 UpdateAlertArea("dele");
+
+                List<cmsMap> RemoveListMap = new List<cmsMap>();
                 foreach (cmsMap cmsM in FormMain.DataModel.Map)
                 {
                     if (JsonHelper.IsRexMatched(cmsM.MapInfo,".*"+delestr+".*"))
                     {
-                        FormMain.DataModel.Map.Remove(cmsM);
+                        RemoveListMap.Add(cmsM);
                     }
+                }
+                foreach (cmsMap rmMap in RemoveListMap)
+                {
+                    FormMain.DataModel.Map.Remove(rmMap);
                 }
 
                 string deletestr = "delete from tb_StaSet where IPandPort = '" + delestr + "'";
@@ -162,15 +196,12 @@ namespace DigitalFenceMonitor
                         RemoveListSS.Add(cmsSS);
                     }
                 }
-
                 foreach (cmsStationSet rmSS in RemoveListSS)
                 {
                     FormMain.DataModel.StationSet.Remove(rmSS);
                 }
 
-                DataLength--;
-                label_all.Text = DataLength.ToString();
-                update_Data(deletestr);
+                
 
                 deletestr = "delete from tb_AreaSet where IPandPort = '" + delestr + "'";
                 List<Object> RemoveList = new List<Object>();
@@ -185,6 +216,10 @@ namespace DigitalFenceMonitor
                 {
                     FormMain.DataModel.AreaSet.Remove((cmsAreaSet)rmAS);
                 }
+
+
+                DataLength = FormMain.DataModel.StationSet.Count;
+                label_all.Text = DataLength.ToString();
                 update_Data(deletestr);
                 LoadTreeView();
             }
@@ -208,9 +243,11 @@ namespace DigitalFenceMonitor
             if (DataLength != 0)
             {
                 string mapstr = "delete from tb_Map";
+                FormMain.DataModel.Map.Clear();
                 UpdateAlertArea("dele");
 
                 string deleall = "delete from tb_StaSet";
+                FormMain.DataModel.StationSet.Clear();
 
                 DataLength = 0;
                 label_all.Text = DataLength.ToString();
@@ -218,6 +255,7 @@ namespace DigitalFenceMonitor
                 update_Data(deleall);
 
                 deleall = "delete from tb_AreaSet ";
+                FormMain.DataModel.AreaSet.Clear();
                 update_Data(deleall);
 
                 EndPoint[] temp = new EndPoint[1000];
@@ -231,10 +269,15 @@ namespace DigitalFenceMonitor
         static public string[] forChange = new string[3];
         private void 修改ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (label_select.Text == "" || label_select.Text == null )
+            {
+                MessageBox.Show("Please Select An Item!", "Warn");
+                return;
+            }
             int Selected = int.Parse(label_select.Text);
-            forChange[0] = dataGridView.Rows[Selected].Cells[1].Value.ToString();
-            forChange[1] = dataGridView.Rows[Selected].Cells[2].Value.ToString();
-            forChange[2] = dataGridView.Rows[Selected].Cells[3].Value.ToString();
+            forChange[0] = dataGridView.Rows[Selected].Cells["IP"].Value.ToString();
+            forChange[1] = dataGridView.Rows[Selected].Cells["Port"].Value.ToString();
+            forChange[2] = dataGridView.Rows[Selected].Cells["StaName"].Value.ToString();
 
             FormStaChange changedatabase = new FormStaChange();
             changedatabase.StartPosition = FormStartPosition.CenterScreen;
