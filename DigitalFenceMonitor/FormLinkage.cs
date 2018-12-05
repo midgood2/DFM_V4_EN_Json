@@ -18,8 +18,6 @@ namespace DigitalFenceMonitor
         {
             InitializeComponent();
         }
-        OleDbConnection conn = FormMain.conn;
-
 
         private void btn_Done_Click(object sender, EventArgs e)
         {
@@ -53,21 +51,29 @@ namespace DigitalFenceMonitor
 
                     FormMain.LinkageBuff[lb_thisip.Text + "-" + comboBox_DeviceAdd.Text + "-" + area.ToString()] = LinkageConnect + "-" + LinkageNodes;
                         
-                    if (conn.State == ConnectionState.Closed) conn.Open();
                     string cmd = "insert into tb_LinkageAlert (IpPortNodes,LinkInfo) values(";
                     cmd += "'" + LinkageConnect + "-" + LinkageNodes + "',";
                     cmd += "'" + lb_thisip.Text + "-" + comboBox_DeviceAdd.Text + "-" + area.ToString() + "'";
                     cmd += ")";
-                    OleDbCommand comm = new OleDbCommand(cmd, conn);
-                    try { comm.ExecuteNonQuery(); }
-                    catch
+                    bool isUpdate = false;
+                    for (int i=0;i<FormMain.DataModel.LinkageAlert.Count;i++)
+                    {
+                        cmsLinkageAlert updLA = FormMain.DataModel.LinkageAlert[i];
+                        if (updLA.LinkInfo == lb_thisip.Text + "-" + comboBox_DeviceAdd.Text + "-" + area.ToString())
                         {
-                        cmd = "update tb_LinkageAlert set IpPortNodes = '" + LinkageConnect + "-" + LinkageNodes + "'";
-                            cmd += " where LinkInfo = '" + lb_thisip.Text + "-" + comboBox_DeviceAdd.Text + "-" + area.ToString() + "'";
-                            comm = new OleDbCommand(cmd, conn);
-                            try { comm.ExecuteNonQuery(); }
-                            catch {; }
+                            updLA.IpPortNodes = LinkageConnect + "-" + LinkageNodes;
+                            FormMain.DataModel.LinkageAlert[i] = updLA;
+                            isUpdate = true;
+                            break;
                         }
+                    }
+                    if (!isUpdate)
+                    {
+                        cmsLinkageAlert addLA = new cmsLinkageAlert();
+                        addLA.IpPortNodes = LinkageConnect + "-" + LinkageNodes;
+                        addLA.LinkInfo = lb_thisip.Text + "-" + comboBox_DeviceAdd.Text + "-" + area.ToString();
+                        FormMain.DataModel.LinkageAlert.Add(addLA);
+                    }
 
                     MessageBox.Show("Total" + all.ToString() + "node(s) are set\r\n" + LinkageNodes + "");
                 }
@@ -87,7 +93,6 @@ namespace DigitalFenceMonitor
 
         private void FormLinkage_Load(object sender, EventArgs e)
         {
-            if (conn.State == ConnectionState.Closed) conn.Open();
             if (FormMain.LinkageSelect==1)
             {
                 for (int i = 0; i < FormMain.RemotePointArrCount; i++)
@@ -143,6 +148,7 @@ namespace DigitalFenceMonitor
 
         private void FormLinkage_FormClosing(object sender, FormClosingEventArgs e)
         {
+            FormMain.DataModel.Write(JsonHelper.SerializeObject(FormMain.DataModel));
             FormMain.LinkageSelect = -1;
         }
 
@@ -151,10 +157,8 @@ namespace DigitalFenceMonitor
             if (FormMain.LinkageSelect == 1)
             {
                 FormMain.LinkageBuff.Clear();
-                if (conn.State == ConnectionState.Closed) conn.Open();
                 string cmd = "delete * from tb_LinkageAlert";
-                OleDbCommand comm = new OleDbCommand(cmd, conn);
-                comm.ExecuteNonQuery();
+                FormMain.DataModel.LinkageAlert.Clear();
             }
         }
 
@@ -162,24 +166,23 @@ namespace DigitalFenceMonitor
         {
             lb_thisip.Text = FormMain.IPBuff[comboBox_StaName.Text];
             string sql = "select AreaNum from tb_AreaSet where IPandPort = '" + lb_thisip.Text + "'";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
-            tempda.Fill(tempdt);
+            
+
 
             comboBox_DeviceAdd.Items.Clear();
             comboBox_DeviceAdd.Text = "";
-
-            for (int i = 0; i < tempdt.Rows.Count; i++)
+            for (int i = 0;i < FormMain.DataModel.AreaSet.Count;i++)
             {
+                
                 if (i != 0)
                 {
-                    int x = Convert.ToInt16(tempdt.Rows[i]["AreaNum"]);
-                    int y = Convert.ToInt16(tempdt.Rows[i - 1]["AreaNum"]);
-                    if (x != y) comboBox_DeviceAdd.Items.Add(tempdt.Rows[i]["AreaNum"]);
+                    int x = Convert.ToInt16(FormMain.DataModel.AreaSet[i].AreaNum);
+                    int y = Convert.ToInt16(FormMain.DataModel.AreaSet[i-1].AreaNum);
+                    if (x != y) comboBox_DeviceAdd.Items.Add(FormMain.DataModel.AreaSet[i].AreaNum);
                 }
                 else
                 {
-                    comboBox_DeviceAdd.Items.Add(tempdt.Rows[i]["AreaNum"]);
+                    comboBox_DeviceAdd.Items.Add(FormMain.DataModel.AreaSet[i].AreaNum);
                 }
             }
         }
@@ -189,20 +192,17 @@ namespace DigitalFenceMonitor
             string str1 = lb_thisip.Text;
             string str2 = comboBox_DeviceAdd.Text;
 
-            if (conn.State == ConnectionState.Closed) conn.Open();
             string sql = "select Descripe from tb_AreaSet where IPandPort = '" + str1 + "' and AreaNum = '" + str2 + "'";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
 
-            tempda.Fill(tempdt);
             comboBox_Position.Items.Clear();
             comboBox_Position.Text = "";
 
-            if (tempdt.Rows.Count != 0)
+
+            if ( FormMain.DataModel.AreaSet.Count != 0)
             {
-                for (int i = 0; i < tempdt.Rows.Count; i++)
+                for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
                 {
-                    comboBox_Position.Items.Add(tempdt.Rows[i]["Descripe"]);
+                    comboBox_Position.Items.Add(FormMain.DataModel.AreaSet[i].Describe);
                 }
                 comboBox_Position.SelectedIndex = 0;
             }

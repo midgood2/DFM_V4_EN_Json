@@ -183,8 +183,10 @@ namespace DigitalFenceMonitor
         public void Write(string output)
         {
             string MapPath = this.Path;
-            FileStream fs = new FileStream(@MapPath, FileMode.OpenOrCreate, FileAccess.Write);
+            FileStream fs = new FileStream(@MapPath, FileMode.Truncate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
+            fs.Flush();
+            sw.Flush();
             sw.WriteLine(formatJson(output));
             sw.Close();
             fs.Close();
