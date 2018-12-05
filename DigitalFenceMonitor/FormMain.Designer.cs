@@ -544,6 +544,7 @@
             this.pictureBox_Map.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Map.TabIndex = 15;
             this.pictureBox_Map.TabStop = false;
+            this.pictureBox_Map.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             // 
             // tabPage_Monitor
             // 

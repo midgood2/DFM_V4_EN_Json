@@ -78,6 +78,9 @@ namespace DigitalFenceMonitor
         //设置昼夜转换定时器
         System.Timers.Timer daynightswitch = new System.Timers.Timer(30 * 1000);
         //载入地图
+        public float resizeParametreX = (float)(1);
+        public float resizeParametreY = (float)(1);
+        public float pictureBox_Map_X, pictureBox_Map_Y, pictureBox_edit_X, pictureBox_edit_Y;
         public static System.Timers.Timer reloadmap = new System.Timers.Timer(300);
         public bool MasterOrNot = true;
         static public Dictionary<string, DayNightBuffCLS> DayNightBuff = new Dictionary<string,DayNightBuffCLS>();
@@ -131,6 +134,15 @@ namespace DigitalFenceMonitor
                 ctrl.Tag = ctrl.Size;
             }
             Tag = factor;
+
+            pictureBox_Map_X = pictureBox_Map.Location.X / (float)Size.Width;
+            pictureBox_Map_Y = pictureBox_Map.Location.Y / (float)Size.Width;
+            pictureBox_Map.Tag = pictureBox_Map.Size;
+
+
+            pictureBox_edit_X = pictureBox_edit.Location.X / (float)Size.Width;
+            pictureBox_edit_Y = pictureBox_edit.Location.Y / (float)Size.Width;
+            pictureBox_edit.Tag = pictureBox_edit.Size;
 
         }
 
@@ -1424,7 +1436,7 @@ namespace DigitalFenceMonitor
                         {
                             string x = (string)tempdt.Rows[i]["PointX"];
                             string y = (string)tempdt.Rows[i]["PointY"];
-                            Point p = new Point(int.Parse(x), int.Parse(y));
+                            Point p = new Point((int)(int.Parse(x) * resizeParametreX), (int)(int.Parse(y)*resizeParametreY));
                             PointBuff[AreaCount][PointCount++] = p;
                         }
 
@@ -1433,7 +1445,9 @@ namespace DigitalFenceMonitor
                             PointCount = 0;
                             last = tempdt.Rows[i]["MapInfo"].ToString();
                             PointBuff.Add(++AreaCount, new Dictionary<int, Point>());
-                            PointBuff[AreaCount][PointCount++] = new Point((int)tempdt.Rows[i]["PointX"], (int)tempdt.Rows[i]["PointY"]);
+                            string x = (string)tempdt.Rows[i]["PointX"];
+                            string y = (string)tempdt.Rows[i]["PointY"];
+                            PointBuff[AreaCount][PointCount++] = new Point((int)(int.Parse(x) * resizeParametreX), (int)(int.Parse(y) * resizeParametreY));
                         }
                     }
 
@@ -1742,9 +1756,21 @@ namespace DigitalFenceMonitor
                 ctrl.Top = (int)(Size.Height * scale[i++]);
                 ctrl.Width = (int)(Size.Width / (float)scale[0] * ((Size)ctrl.Tag).Width);
                 ctrl.Height = (int)(Size.Height / (float)scale[1] * ((Size)ctrl.Tag).Height);
-
                 //每次使用的都是最初始的控件大小，保证准确无误。
             }
+
+            pictureBox_Map.Left = (int)(Size.Width * pictureBox_Map_X);
+            pictureBox_Map.Top = (int)(Size.Width * pictureBox_Map_Y);
+            pictureBox_Map.Width = (int)(Size.Width / (float)scale[0] * ((Size)pictureBox_Map.Tag).Width);
+            pictureBox_Map.Height = (int)(Size.Height / (float)scale[1] * ((Size)pictureBox_Map.Tag).Height);
+
+            pictureBox_edit.Left = (int)(Size.Width * pictureBox_edit_X);
+            pictureBox_edit.Top = (int)(Size.Width * pictureBox_edit_Y);
+            pictureBox_edit.Width = (int)(Size.Width / (float)scale[0] * ((Size)pictureBox_edit.Tag).Width);
+            pictureBox_edit.Height = (int)(Size.Height / (float)scale[1] * ((Size)pictureBox_edit.Tag).Height);
+            resizeParametreX = Size.Width / (float)scale[0];
+            resizeParametreY = Size.Height / (float)scale[1];
+
         }
 
         private void UsageInstructionToolStripMenuItem_Click(object sender, EventArgs e)
