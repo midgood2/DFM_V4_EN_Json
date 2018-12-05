@@ -14,9 +14,6 @@ namespace DigitalFenceMonitor
 
     public partial class FormDenfenAreaSet : Form
     {
-        OleDbConnection conn = FormMain.conn;
-        OleDbDataAdapter dataada = null;
-        OleDbCommandBuilder commandbld = null;
         DataTable datatable = null;
         BindingSource bindingsrc = null;
 
@@ -38,18 +35,12 @@ namespace DigitalFenceMonitor
                 btn_Add.Enabled = true;
             }
 
-            if (conn.State == ConnectionState.Closed) conn.Open();
-
-            datatable = new DataTable();
             string sql = "select * from tb_AreaSet";
-            dataada = new OleDbDataAdapter(sql, conn);
-            commandbld = new OleDbCommandBuilder(dataada);
+            datatable = JsonHelper.ToDataTable(FormMain.DataModel.AreaSet);
             bindingsrc = new BindingSource();
             dataGridView.DataSource = datatable;
             bindingsrc.DataSource = datatable;
-            DataSet dsMsg = new DataSet();
-            dataada.Fill(dsMsg);
-            DataLength = dsMsg.Tables[0].Rows.Count;
+            DataLength = FormMain.DataModel.AreaSet.Count;
 
             StaBuff = FormMain.StaBuff;
 
@@ -59,19 +50,20 @@ namespace DigitalFenceMonitor
             dataGridView.Columns["StaName"].DisplayIndex = 2;
             for(int i = 0; i < DataLength; i++)
             {
-                string s = dataGridView.Rows[i].Cells["IPandPort"].Value.ToString();
+                string s = dataGridView.Rows[i].Cells["IPport"].Value.ToString();
                 dataGridView.Rows[i].Cells["StaName"].Value = StaBuff[s.Trim()];
             }
 
-            dataGridView.Columns["IPandPort"].HeaderText = "Base station";
+            dataGridView.Columns["IPport"].HeaderText = "Base station";
             dataGridView.Columns["AreaNum"].HeaderText = "Device address";
             dataGridView.Columns["Status"].HeaderText = "Zone status";
-            dataGridView.Columns["Descripe"].HeaderText = "Zone location";
+            dataGridView.Columns["Describe"].HeaderText = "Zone location";
             dataGridView.Columns["DeviceType"].HeaderText = "Device type";
         }
 
         private void btn_exit_Click(object sender, EventArgs e)
         {
+            FormMain.DataModel.Write(JsonHelper.SerializeObject(FormMain.DataModel));
             this.Close();
         }
 
@@ -103,10 +95,9 @@ namespace DigitalFenceMonitor
 
             if (cmd != "init")
             {
-                OleDbCommand comm = new OleDbCommand(cmd, conn);
                 try
                 {
-                    comm.ExecuteNonQuery();
+                    // comm.ExecuteNonQuery();
                 }
                 catch
                 {
@@ -115,16 +106,14 @@ namespace DigitalFenceMonitor
                 }
             }
 
-            DataTable dt = (DataTable)dataGridView.DataSource;
-            dt.Rows.Clear();
-            dataGridView.DataSource = dt;
-
-            dataada.Fill(datatable);
-            dataada.Update((DataTable)bindingsrc.DataSource);
+            DataTable Dt = (DataTable)dataGridView.DataSource;
+            Dt.Rows.Clear();
+            DataTable newDt = JsonHelper.ToDataTable(FormMain.DataModel.AreaSet);
+            dataGridView.DataSource = newDt;
 
             for (int i = 0; i < DataLength; i++)
             {
-                string s = dataGridView.Rows[i].Cells["IPandPort"].Value.ToString();
+                string s = dataGridView.Rows[i].Cells["IPport"].Value.ToString();
                 try
                 {
                     dataGridView.Rows[i].Cells["StaName"].Value = StaBuff[s];
@@ -145,11 +134,11 @@ namespace DigitalFenceMonitor
             if (DataLength != 0)
             {
                 string mapstr = "delete from tb_Map";
-                OleDbCommand comm = new OleDbCommand(mapstr, conn);
-                comm.ExecuteNonQuery();
+                FormMain.DataModel.Map.Clear();
                 UpdateAlertArea("dele");
 
                 string deleall = "delete from tb_AreaSet";
+                FormMain.DataModel.AreaSet.Clear();
                 DataLength = 0;
                 update_Data(deleall);
                 LoadTreeView();
@@ -178,17 +167,40 @@ namespace DigitalFenceMonitor
                 int Selected = int.Parse(label_select.Text);
                 string str = dataGridView.Rows[Selected].Cells["Map"].Value.ToString().Split('-')[1];
 
-                string s1 = dataGridView.Rows[Selected].Cells["IPandPort"].Value.ToString();
+                string s1 = dataGridView.Rows[Selected].Cells["IPport"].Value.ToString();
                 string s2 = dataGridView.Rows[Selected].Cells["AreaNum"].Value.ToString();
                 string mapstr = "delete from tb_Map where MapInfo like '%" + s1 + "," + s2 + "," + "%'";
-                OleDbCommand comm = new OleDbCommand(mapstr, conn);
-                comm.ExecuteNonQuery();
+                List<cmsMap> RemoveListMap = new List<cmsMap>();
+                foreach (cmsMap cmsM in FormMain.DataModel.Map)
+                {
+                    if (JsonHelper.IsRexMatched(cmsM.MapInfo, ".*" + s1 + "," + s2 + ".*"))
+                    {
+                        RemoveListMap.Add(cmsM);
+                    }
+                }
+                foreach (cmsMap rmMap in RemoveListMap)
+                {
+                    FormMain.DataModel.Map.Remove(rmMap);
+                }
                 UpdateAlertArea("dele");
 
                 if (str == "0")
                 { 
                     string map = dataGridView.Rows[int.Parse(label_select.Text)].Cells["Map"].Value.ToString().Split('-')[0] + "-0";
                     string deletestr = "delete from tb_AreaSet where map = '" + map + "'";
+                    List<cmsAreaSet> RemoveListAS = new List<cmsAreaSet>();
+                    foreach (cmsAreaSet cmsAS in FormMain.DataModel.AreaSet)
+                    {
+                        if ( cmsAS.Map == map )
+                        {
+                                RemoveListAS.Add(cmsAS);
+                        }
+                    }
+                    foreach (cmsAreaSet rmAS in RemoveListAS)
+                    {
+                        FormMain.DataModel.AreaSet.Remove(rmAS);
+                    }
+
                     DataLength--;
                     update_Data(deletestr);
                 }
@@ -198,6 +210,18 @@ namespace DigitalFenceMonitor
                     for (int j = 1; j < 3; j++)
                     {
                         string deletestr = "delete from tb_AreaSet where map = '" + map + "-" + j.ToString() + "'";
+                        List<cmsAreaSet> RemoveListAS = new List<cmsAreaSet>();
+                        foreach (cmsAreaSet cmsAS in FormMain.DataModel.AreaSet)
+                        {
+                            if (cmsAS.Map == map + "-" + j.ToString())
+                            {
+                                RemoveListAS.Add(cmsAS);
+                            }
+                        }
+                        foreach (cmsAreaSet rmAS in RemoveListAS)
+                        {
+                            FormMain.DataModel.AreaSet.Remove(rmAS);
+                        }
                         DataLength--;
                         update_Data(deletestr);
                     }
@@ -212,21 +236,20 @@ namespace DigitalFenceMonitor
         {
             for (int i = 0; i < DataLength; i++)
             {
-                string s = dataGridView.Rows[i].Cells["IPandPort"].Value.ToString();
+                string s = dataGridView.Rows[i].Cells["IPport"].Value.ToString();
                 dataGridView.Rows[i].Cells["StaName"].Value = StaBuff[s];
             }
         }
         private void updata_datagridView()
         {
-            DataTable dt = (DataTable)dataGridView.DataSource;
-            dt.Rows.Clear();
-            dataGridView.DataSource = dt;
+            DataTable Dt = (DataTable)dataGridView.DataSource;
+            Dt.Rows.Clear();
+            DataTable newDt = JsonHelper.ToDataTable(FormMain.DataModel.AreaSet);
+            dataGridView.DataSource = newDt;
 
-            dataada.Fill(datatable);
-            dataada.Update((DataTable)bindingsrc.DataSource);
             for (int i = 0; i < DataLength; i++)
             {
-                string s = dataGridView.Rows[i].Cells["IPandPort"].Value.ToString();
+                string s = dataGridView.Rows[i].Cells["IPport"].Value.ToString();
                 try
                 {
                     dataGridView.Rows[i].Cells["StaName"].Value = StaBuff[s];

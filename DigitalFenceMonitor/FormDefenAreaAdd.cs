@@ -27,12 +27,12 @@ namespace DigitalFenceMonitor
 
         private void btn_Exit_Click(object sender, EventArgs e)
         {
+            FormMain.DataModel.Write(JsonHelper.SerializeObject(FormMain.DataModel));
             this.Close();
         }
 
         public delegate void Load_TreeView();
         public event Load_TreeView LoadTreeView;
-        OleDbConnection conn = FormMain.conn;
 
         private void btn_Done_Click(object sender, EventArgs e)
         {
@@ -53,13 +53,18 @@ namespace DigitalFenceMonitor
                 bool flag = true;
 
                 string sql = "select AreaNum from tb_AreaSet Where IPandPort ='" + data[0] + "'";
-                DataTable tempdt = new DataTable();
-                OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
-                tempda.Fill(tempdt);
-
-                for (int i = 0; i < tempdt.Rows.Count; i++)
+                List<string> areaNum = new List<string>();
+                foreach ( cmsAreaSet cmsAS in FormMain.DataModel.AreaSet )
                 {
-                    string temp = tempdt.Rows[i]["AreaNum"].ToString();
+                    if ( cmsAS.IPport == data[0] )
+                    {
+                        areaNum.Add(cmsAS.AreaNum);
+                    }
+                }
+
+                for (int i = 0; i < areaNum.Count; i++)
+                {
+                    string temp = areaNum[i];
                     if (temp == data[1])
                     {
                         flag = false;
@@ -78,6 +83,14 @@ namespace DigitalFenceMonitor
                         for (int i = 0; i < 5; i++)
                             insertstr += data[i] + "', '";
                         insertstr += data[0] + "," + data[1] + "-0" + "')";
+                        cmsAreaSet addAS = new cmsAreaSet();
+                        addAS.IPport = data[0];
+                        addAS.AreaNum = data[1];
+                        addAS.Status = data[2];
+                        addAS.Describe = data[3];
+                        addAS.DeviceType = data[4];
+                        addAS.Map = data[0] + "," + data[1] + "-0";
+                        FormMain.DataModel.AreaSet.Add(addAS);
 
                         FormDenfenAreaSet.DataLength++;
                         UpdateDataBase(insertstr);
@@ -94,6 +107,15 @@ namespace DigitalFenceMonitor
                             insertstr += data[3] + "_" + j.ToString() + "', '";
                             insertstr += data[4] + "', '";
                             insertstr += data[0] + "," + data[1] + "-" + j.ToString() + "')";
+
+                            cmsAreaSet addAS = new cmsAreaSet();
+                            addAS.IPport = data[0];
+                            addAS.AreaNum = data[1];
+                            addAS.Status = data[2];
+                            addAS.Describe = data[3] + "_" + j.ToString();
+                            addAS.DeviceType = data[4];
+                            addAS.Map = data[0] + "," + data[1] + "-" + j.ToString();
+                            FormMain.DataModel.AreaSet.Add(addAS);
 
                             FormDenfenAreaSet.DataLength++;
                             UpdateDataBase(insertstr);
@@ -116,21 +138,17 @@ namespace DigitalFenceMonitor
         
         private void FormDefenAreaAdd_Load(object sender, EventArgs e)
         {
-            if (conn.State == ConnectionState.Closed) conn.Open();
             string sql = "select IPandPort,StaName from tb_StaSet";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
-            tempda.Fill(tempdt);
 
-            int len = tempdt.Rows.Count;
+            int len = FormMain.DataModel.StationSet.Count;
             for (int i = 0; i < len; i++)
             {
-                StaBuff[tempdt.Rows[i]["StaName"].ToString()] = tempdt.Rows[i]["IPandPort"].ToString();
+                StaBuff[FormMain.DataModel.StationSet[i].StaName] = FormMain.DataModel.StationSet[i].IPandPort;
             }
 
-            for (int i=0;i<tempdt.Rows.Count;i++)
-                comboBox_StaName.Items.Add(tempdt.Rows[i]["StaName"].ToString());
-            if(tempdt.Rows.Count!=0) comboBox_StaName.SelectedIndex = 0;
+            for (int i=0;i< len; i++)
+                comboBox_StaName.Items.Add(FormMain.DataModel.StationSet[i].StaName);
+            if (len!=0) comboBox_StaName.SelectedIndex = 0;
 
             comboBox_AreaStatus.Items.Add("Arm");
             comboBox_AreaStatus.Items.Add("Disarm");
