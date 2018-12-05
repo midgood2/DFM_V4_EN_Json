@@ -14,7 +14,7 @@ namespace DigitalFenceMonitor
         // public int ID { get; set; }
         public string UserName { get; set; }
         public string PassWord { get; set; }
-        public string autorition { get; set; }
+        public string authorition { get; set; }
     }
 
     public class cmsAreaSet

@@ -66,7 +66,7 @@
             this.lab_Auth.Font = new System.Drawing.Font("Cambria", 12F);
             this.lab_Auth.Location = new System.Drawing.Point(198, 23);
             this.lab_Auth.Name = "lab_Auth";
-            this.lab_Auth.Size = new System.Drawing.Size(96, 16);
+            this.lab_Auth.Size = new System.Drawing.Size(93, 19);
             this.lab_Auth.TabIndex = 8;
             this.lab_Auth.Text = "permissions";
             // 
@@ -76,7 +76,7 @@
             this.lab_UserPSW.Font = new System.Drawing.Font("Cambria", 12F);
             this.lab_UserPSW.Location = new System.Drawing.Point(22, 59);
             this.lab_UserPSW.Name = "lab_UserPSW";
-            this.lab_UserPSW.Size = new System.Drawing.Size(72, 16);
+            this.lab_UserPSW.Size = new System.Drawing.Size(77, 19);
             this.lab_UserPSW.TabIndex = 7;
             this.lab_UserPSW.Text = "password";
             // 
@@ -86,7 +86,7 @@
             this.lab_UserName.Font = new System.Drawing.Font("Cambria", 12F);
             this.lab_UserName.Location = new System.Drawing.Point(22, 23);
             this.lab_UserName.Name = "lab_UserName";
-            this.lab_UserName.Size = new System.Drawing.Size(72, 16);
+            this.lab_UserName.Size = new System.Drawing.Size(79, 19);
             this.lab_UserName.TabIndex = 6;
             this.lab_UserName.Text = "Username";
             // 
@@ -141,12 +141,12 @@
             this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new System.Drawing.Point(12, 93);
+            this.dataGridView.Location = new System.Drawing.Point(12, 113);
             this.dataGridView.MultiSelect = false;
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
             this.dataGridView.RowTemplate.Height = 23;
-            this.dataGridView.Size = new System.Drawing.Size(434, 167);
+            this.dataGridView.Size = new System.Drawing.Size(434, 147);
             this.dataGridView.TabIndex = 15;
             this.dataGridView.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_CellMouseClick);
             // 
@@ -164,7 +164,7 @@
             this.label1.Font = new System.Drawing.Font("Cambria", 12F);
             this.label1.Location = new System.Drawing.Point(161, 59);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 32);
+            this.label1.Size = new System.Drawing.Size(77, 38);
             this.label1.TabIndex = 16;
             this.label1.Text = "password\r\nAGAIN";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

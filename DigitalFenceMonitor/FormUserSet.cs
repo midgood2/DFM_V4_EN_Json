@@ -12,9 +12,6 @@ namespace DigitalFenceMonitor
 {
     public partial class FormUserSet : Form
     {
-        OleDbConnection conn = FormMain.conn;
-        OleDbDataAdapter dataada = null;
-        OleDbCommandBuilder commandbld = null;
         DataTable datatable = null;
         BindingSource bindingsrc = null;
         FormMain fm = new FormMain();
@@ -26,18 +23,16 @@ namespace DigitalFenceMonitor
 
         private void UserSet_Load(object sender, EventArgs e)
         {
-            datatable = new DataTable();
             string sql = "select username,authorition from tb_Account";
-            dataada = new OleDbDataAdapter(sql, conn);
-            commandbld = new OleDbCommandBuilder(dataada);
+
+            datatable = JsonHelper.ToDataTable(FormMain.DataModel.Account);
             bindingsrc = new BindingSource();
             dataGridView.DataSource = datatable;
             bindingsrc.DataSource = datatable;
-            DataSet dsMsg = new DataSet();
-            dataada.Fill(dsMsg);
-            DataLength = dsMsg.Tables[0].Rows.Count;
+
+            DataLength = FormMain.DataModel.Account.Count;
             update_Data("init");
-            dataGridView.Columns["username"].HeaderText = "username";
+            dataGridView.Columns["UserName"].HeaderText = "username";
             dataGridView.Columns["authorition"].HeaderText = "permissions";
 
             comboBox_auth.Items.Add("0-administrator's permission");
@@ -47,24 +42,19 @@ namespace DigitalFenceMonitor
         {
             if (cmd != "init")
             {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-                OleDbCommand comm = new OleDbCommand(cmd, conn);
                 try
                 {
-                    comm.ExecuteNonQuery();
+                    // comm.ExecuteNonQuery();
                 }
                 catch
                 {
                     MessageBox.Show("Repeat", "WARN");
                 }
             }
-
-            DataTable dt = (DataTable)dataGridView.DataSource;
-            dt.Rows.Clear();
-            dataGridView.DataSource = dt;
-
-            dataada.Fill(datatable);
-            dataada.Update((DataTable)bindingsrc.DataSource);
+            DataTable Dt = (DataTable)dataGridView.DataSource;
+            Dt.Rows.Clear();
+            DataTable newDt = JsonHelper.ToDataTable(FormMain.DataModel.Account);
+            dataGridView.DataSource = newDt;
         }
 
         private void btn_exit_Click(object sender, EventArgs e)
@@ -80,6 +70,18 @@ namespace DigitalFenceMonitor
                 string username = dataGridView.Rows[Selected].Cells[0].Value.ToString();
 
                 string deletestr = "delete * from tb_Account where username = '" + username + "'";
+                List<cmsAccount> RemoveListAcc = new List<cmsAccount>();
+                foreach (cmsAccount cmsAcc in FormMain.DataModel.Account)
+                {
+                    if (cmsAcc.UserName == username)
+                    {
+                        RemoveListAcc.Add(cmsAcc);
+                    }
+                }
+                foreach (cmsAccount rmAcc in RemoveListAcc)
+                {
+                    FormMain.DataModel.Account.Remove(rmAcc);
+                }
                 update_Data(deletestr);
             }
         }
@@ -100,6 +102,12 @@ namespace DigitalFenceMonitor
                     insertstr += textBox_UserName.Text + "', '";
                     insertstr += textBox_UserPSW0.Text + "', '";
                     insertstr += comboBox_auth.Text + "')";
+
+                    cmsAccount addAcc = new cmsAccount();
+                    addAcc.UserName = textBox_UserName.Text;
+                    addAcc.PassWord = textBox_UserPSW0.Text;
+                    addAcc.authorition = comboBox_auth.Text;
+                    FormMain.DataModel.Account.Add(addAcc);
 
                     update_Data(insertstr);
                     DataLength++;

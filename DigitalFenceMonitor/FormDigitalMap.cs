@@ -8,7 +8,6 @@ namespace DigitalFenceMonitor
 {
     public partial class FormDigitalMap : Form
     {
-        OleDbConnection conn = FormMain.conn;
         static public string MapPath = "";
 
         public FormDigitalMap()
@@ -61,8 +60,6 @@ namespace DigitalFenceMonitor
 
         private void FormDigitalMap_Load(object sender, EventArgs e)
         {
-            if (conn.State == ConnectionState.Closed) conn.Open();
-
             for (int i = 0; i < FormMain.RemotePointArrCount; i++)
             {
                 string ipport = FormMain.RemotePointArr[i].ToString();
@@ -76,30 +73,25 @@ namespace DigitalFenceMonitor
         {
             string str = comboBox_StaName.Text.Split('-')[1];
             
-            if(conn.State == ConnectionState.Closed) conn.Open();
             string sql = "select AreaNum from tb_AreaSet where IPandPort = '" + str + "'";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
-
-            tempda.Fill(tempdt);
 
             comboBox_AreaNum.Items.Clear();
             comboBox_AreaNum.Text = "";
 
-            if (tempdt.Rows.Count !=0)
+            if (FormMain.DataModel.AreaSet.Count !=0)
             {
-                for (int i = 0; i < tempdt.Rows.Count; i++)
+                for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
                 {
                     if (i != 0)
                     {
-                        int x = Convert.ToInt16(tempdt.Rows[i]["AreaNum"]);
-                        int y = Convert.ToInt16(tempdt.Rows[i - 1]["AreaNum"]);
+                        int x = Convert.ToInt16(FormMain.DataModel.AreaSet[i].AreaNum);
+                        int y = Convert.ToInt16(FormMain.DataModel.AreaSet[i-1].AreaNum);
                         if (x == y) ;
-                        else comboBox_AreaNum.Items.Add(tempdt.Rows[i]["AreaNum"]);
+                        else comboBox_AreaNum.Items.Add(FormMain.DataModel.AreaSet[i].AreaNum);
                     }
                     else
                     {
-                        comboBox_AreaNum.Items.Add(tempdt.Rows[i]["AreaNum"]);
+                        comboBox_AreaNum.Items.Add(FormMain.DataModel.AreaSet[i].AreaNum);
                     }
                 }
 
@@ -113,20 +105,16 @@ namespace DigitalFenceMonitor
             string str1 = comboBox_StaName.Text.Split('-')[1];
             string str2 = comboBox_AreaNum.Text;
 
-            if (conn.State == ConnectionState.Closed) conn.Open();
             string sql = "select Descripe from tb_AreaSet where IPandPort = '" + str1 + "' and AreaNum = '" + str2 + "'";
-            DataTable tempdt = new DataTable();
-            OleDbDataAdapter tempda = new OleDbDataAdapter(sql, conn);
 
-            tempda.Fill(tempdt);
             comboBox_Position.Items.Clear();
             comboBox_Position.Text = "";
 
-            if (tempdt.Rows.Count != 0)
+            if (FormMain.DataModel.AreaSet.Count != 0)
             {      
-                for (int i = 0; i < tempdt.Rows.Count; i++)
+                for (int i = 0; i < FormMain.DataModel.AreaSet.Count; i++)
                 {
-                    comboBox_Position.Items.Add(tempdt.Rows[i]["Descripe"]);
+                    comboBox_Position.Items.Add(FormMain.DataModel.AreaSet[i].Describe);
                 }
                 comboBox_Position.SelectedIndex = 0;
             }
