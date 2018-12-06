@@ -134,3 +134,4 @@ C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.pdb
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csprojAssemblyReference.cache
 C:\Users\godshen\Documents\Documents\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csproj.CopyComplete
+D:\document\repo\DFM_V4_EN_Json\DigitalFenceMonitor\obj\Debug\DigitalFenceMonitor.csprojAssemblyReference.cache

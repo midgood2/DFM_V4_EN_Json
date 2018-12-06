@@ -1495,9 +1495,12 @@ namespace DigitalFenceMonitor
                 cmd += "'" + lb_thismap.Text.Split('-')[0] + "'";
                 cmd += ")";
 
+                int i_px = int.Parse(SaveMap[i].Split(',')[0]);
+                int i_py = int.Parse(SaveMap[i].Split(',')[1]);
+
                 cmsMap addM = new cmsMap();
-                addM.PointX = SaveMap[i].Split(',')[0];
-                addM.PointY = SaveMap[i].Split(',')[1];
+                addM.PointX = ((int)(i_px / resizeParametreX)).ToString();
+                addM.PointY = ((int)(i_py / resizeParametreY)).ToString();
                 addM.MapInfo = lb_thismap.Text.Split('-')[0];
 
                 FormMain.DataModel.Map.Add(addM);

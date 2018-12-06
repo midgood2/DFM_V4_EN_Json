@@ -41,24 +41,27 @@ namespace DigitalFenceMonitor
             dataGridView.DataSource = datatable;
             bindingsrc.DataSource = datatable;
             DataLength = FormMain.DataModel.AreaSet.Count;
-
-            StaBuff = FormMain.StaBuff;
-
-            update_Data("init");
-
-            dataGridView.Columns.Add("StaName", "Base station Name");
-            dataGridView.Columns["StaName"].DisplayIndex = 2;
-            for(int i = 0; i < DataLength; i++)
+            if (DataLength!=0)
             {
-                string s = dataGridView.Rows[i].Cells["IPport"].Value.ToString();
-                dataGridView.Rows[i].Cells["StaName"].Value = StaBuff[s.Trim()];
-            }
+                StaBuff = FormMain.StaBuff;
 
-            dataGridView.Columns["IPport"].HeaderText = "Base station";
-            dataGridView.Columns["AreaNum"].HeaderText = "Device address";
-            dataGridView.Columns["Status"].HeaderText = "Zone status";
-            dataGridView.Columns["Describe"].HeaderText = "Zone location";
-            dataGridView.Columns["DeviceType"].HeaderText = "Device type";
+                update_Data("init");
+
+                dataGridView.Columns.Add("StaName", "Base station Name");
+                dataGridView.Columns["StaName"].DisplayIndex = 2;
+                for (int i = 0; i < DataLength; i++)
+                {
+                    string s = dataGridView.Rows[i].Cells["IPport"].Value.ToString();
+                    dataGridView.Rows[i].Cells["StaName"].Value = StaBuff[s.Trim()];
+                }
+
+                dataGridView.Columns["IPport"].HeaderText = "Base station";
+                dataGridView.Columns["AreaNum"].HeaderText = "Device address";
+                dataGridView.Columns["Status"].HeaderText = "Zone status";
+                dataGridView.Columns["Describe"].HeaderText = "Zone location";
+                dataGridView.Columns["DeviceType"].HeaderText = "Device type";
+            }
+            
         }
 
         private void btn_exit_Click(object sender, EventArgs e)
@@ -123,10 +126,15 @@ namespace DigitalFenceMonitor
                     ;
                 }
             }
-            dataGridView.Columns[0].Visible = false;
-            dataGridView.Columns[5].Visible = false;
+            try
+            {
+                dataGridView.Columns[0].Visible = false;
+                dataGridView.Columns[5].Visible = false;
 
-            dataGridView.Columns[1].Width = 150;
+                dataGridView.Columns[1].Width = 150;
+            }
+            catch { }
+            
         }
 
         private void btn_DelAll_Click(object sender, EventArgs e)
